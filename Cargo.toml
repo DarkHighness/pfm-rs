@@ -1,5 +1,5 @@
 [package]
-name = "pfm"
+name = "pfm-rs"
 version = "0.1.2"
 authors = ["Zixian Cai <u5937495@anu.edu.au>"]
 edition = "2021"

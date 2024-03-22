@@ -1,6 +1,6 @@
 use super::util::pfm_err_description;
 use libc::{prctl, PR_TASK_PERF_EVENTS_DISABLE, PR_TASK_PERF_EVENTS_ENABLE};
-use pfm_sys::{pfm_initialize, PFM_SUCCESS};
+use pfm_sys::{pfm_initialize, pfm_terminate, PFM_SUCCESS};
 
 #[derive(Default)]
 pub struct Perfmon {
@@ -19,6 +19,16 @@ impl Perfmon {
         }
     }
 
+    pub fn terminate(&mut self) {
+        if self.initialized {
+            unsafe {
+                pfm_terminate();
+            }
+
+            self.initialized = false;
+        }
+    }
+
     /// Enable all counters on the calling process
     pub fn enable(&self) {
         unsafe {
@@ -31,6 +41,12 @@ impl Perfmon {
         unsafe {
             prctl(PR_TASK_PERF_EVENTS_DISABLE);
         }
+    }
+}
+
+impl Drop for Perfmon {
+    fn drop(&mut self) {
+        self.terminate();
     }
 }
 
